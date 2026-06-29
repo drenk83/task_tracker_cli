@@ -2,6 +2,8 @@ package service
 
 import (
 	"fmt"
+	"strconv"
+	"time"
 
 	cfg "github.com/drenk83/task_tracker_cli/config"
 	r "github.com/drenk83/task_tracker_cli/repository"
@@ -18,6 +20,16 @@ func AddTask(args []string) error {
 		fmt.Println("Will be used:", description)
 	}
 
+	tasks, err := r.LoadTasks()
+	if err != nil {
+		return err
+	}
+
+	tasks = append(tasks, *createNewTask(len(tasks)+1, description))
+
+	if err := r.WriteTasks(tasks); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -37,5 +49,19 @@ func ListTasks(args []string) error {
 	if len(data) == 0 {
 		fmt.Println("No tasks")
 	}
+
+	for _, task := range data {
+		fmt.Println(task)
+	}
 	return nil
+}
+
+func createNewTask(id int, description string) *r.Task {
+	return &r.Task{
+		ID:          strconv.Itoa(id),
+		Description: description,
+		Status:      "TODO",
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
 }
