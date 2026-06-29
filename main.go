@@ -5,12 +5,7 @@ import (
 	"os"
 
 	cfg "github.com/drenk83/task_tracker_cli/config"
-)
-
-const (
-	ADD    = "add"
-	UPDATE = "update"
-	DELETE = "delete"
+	s "github.com/drenk83/task_tracker_cli/service"
 )
 
 func main() {
@@ -20,36 +15,26 @@ func main() {
 		os.Exit(0)
 	}
 
+	var err error
+
 	switch args[0] {
 	case cfg.Add:
-		Add()
+		err = s.AddTask(args[1:])
 	case cfg.Update:
-		Update()
+		err = s.UpdateTask(args[1:])
 	case cfg.Delete:
-		Delete()
+		err = s.DeleteTask(args[1:])
 	case cfg.List:
-		List()
+		err = s.ListTasks(args[1:])
 	default:
 		fmt.Println("Unknow arguments")
+	}
+
+	if err != nil {
+		fmt.Println(err)
 	}
 }
 
 func ProgramInstruction() {
-	fmt.Println("No argumetns")
-}
-
-func Add() {
-	fmt.Println("Add argument")
-}
-
-func Update() {
-	fmt.Println("Update argument")
-}
-
-func Delete() {
-	fmt.Println("Delete argument")
-}
-
-func List() {
-	fmt.Println("List argument")
+	fmt.Println("No args")
 }

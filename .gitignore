@@ -32,3 +32,4 @@ go.work.sum
 # .vscode/
 
 task_tracker_cli
+.gitignore
