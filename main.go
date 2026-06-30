@@ -26,6 +26,10 @@ func main() {
 		err = s.DeleteTask(args[1:])
 	case cfg.List:
 		err = s.ListTasks(args[1:])
+	case cfg.MarkInProgress:
+		err = s.MarkTask(args[1:], cfg.StatusInProgress)
+	case cfg.MarkDone:
+		err = s.MarkTask(args[1:], cfg.StatusDone)
 	default:
 		fmt.Println("Unknow arguments")
 	}

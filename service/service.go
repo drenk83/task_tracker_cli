@@ -131,11 +131,45 @@ func ListTasks(args []string) error {
 	return nil
 }
 
+func MarkTask(args []string, status string) error {
+	if len(args) == 0 {
+		return cfg.ErrNoArguments
+	}
+	id, err := strconv.Atoi(args[0])
+	if err != nil {
+		return cfg.ErrInvalidID
+	}
+
+	tasks, err := r.LoadTasks()
+	if err != nil {
+		return err
+	}
+	for i, task := range tasks {
+		taskID, err := strconv.Atoi(task.ID)
+		if err != nil {
+			return err
+		}
+
+		if taskID == id {
+			tasks[i].Status = status
+			tasks[i].UpdatedAt = time.Now()
+
+			err := r.WriteTasks(tasks)
+			if err != nil {
+				return err
+			}
+			return nil
+		}
+	}
+
+	return cfg.ErrIDDosntExist
+}
+
 func createNewTask(id int, description string) *r.Task {
 	return &r.Task{
 		ID:          strconv.Itoa(id),
 		Description: description,
-		Status:      "TODO",
+		Status:      cfg.StatusTodo,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}

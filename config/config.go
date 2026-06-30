@@ -8,12 +8,14 @@ const (
 	Delete = "delete"
 	List   = "list"
 
-	MarkInProgress = ""
-	MarkDone       = ""
+	MarkInProgress = "mark-in-progress"
+	MarkDone       = "mark-done"
+)
 
-	StatusDone       = ""
-	StatusTodo       = ""
-	StatusInProgress = ""
+const (
+	StatusDone       = "done"
+	StatusTodo       = "TODO"
+	StatusInProgress = "in-progress"
 )
 
 const (
