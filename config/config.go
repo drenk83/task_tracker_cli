@@ -23,4 +23,6 @@ const (
 var (
 	ErrNoArguments     = errors.New("no arguments")
 	ErrInvalidArgument = errors.New("invalid argument")
+	ErrInvalidID       = errors.New("invalid id")
+	ErrIDDosntExist    = errors.New("no id in list")
 )

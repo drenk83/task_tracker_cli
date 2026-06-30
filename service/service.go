@@ -25,7 +25,15 @@ func AddTask(args []string) error {
 		return err
 	}
 
-	tasks = append(tasks, *createNewTask(len(tasks)+1, description))
+	id := 0
+	if len(tasks) != 0 {
+		for _, task := range tasks {
+			taskId, _ := strconv.Atoi(task.ID)
+			id = max(id, taskId)
+		}
+	}
+
+	tasks = append(tasks, *createNewTask(id+1, description))
 
 	if err := r.WriteTasks(tasks); err != nil {
 		return err
@@ -34,11 +42,78 @@ func AddTask(args []string) error {
 }
 
 func UpdateTask(args []string) error {
-	return nil
+	if len(args) == 0 {
+		return cfg.ErrNoArguments
+	}
+	if len(args) != 2 {
+		return cfg.ErrInvalidArgument
+	}
+	id, err := strconv.Atoi(args[0])
+	if err != nil {
+		return cfg.ErrInvalidID
+	}
+
+	tasks, err := r.LoadTasks()
+	if err != nil {
+		return err
+	}
+
+	for i, task := range tasks {
+		taskID, err := strconv.Atoi(task.ID)
+		if err != nil {
+			return err
+		}
+
+		if taskID == id {
+			tasks[i].Description = args[1]
+			tasks[i].UpdatedAt = time.Now()
+
+			err := r.WriteTasks(tasks)
+			if err != nil {
+				return err
+			}
+			return nil
+		}
+	}
+	return cfg.ErrIDDosntExist
 }
 
 func DeleteTask(args []string) error {
-	return nil
+	if len(args) == 0 {
+		return cfg.ErrNoArguments
+	}
+
+	id, err := strconv.Atoi(args[0])
+	if err != nil {
+		return cfg.ErrInvalidID
+	}
+
+	tasks, err := r.LoadTasks()
+	if err != nil {
+		return err
+	}
+	for i, task := range tasks {
+		taskID, err := strconv.Atoi(task.ID)
+		if err != nil {
+			return err
+		}
+
+		if taskID == id {
+			newTasks := make([]r.Task, 0, len(tasks)-1)
+			newTasks = append(newTasks, tasks[:i]...)
+			if i+1 < len(tasks) {
+				newTasks = append(newTasks, tasks[i+1:]...)
+			}
+
+			err := r.WriteTasks(newTasks)
+			if err != nil {
+				return err
+			}
+			return nil
+		}
+	}
+
+	return cfg.ErrIDDosntExist
 }
 
 func ListTasks(args []string) error {
